@@ -40,6 +40,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SnapchatDelegate {
         // See https://docs.snap.com/snap-kit/creative-kit/Tutorials/ios
         cameraController.snapchatDelegate = self
         let cameraViewController = CameraViewController(cameraController: cameraController)
+        
+        // It is mandatory to add a "Powered by Snap" attribution overlay
+        // otherwise your app will be rejected during review.
+        // You can however, configure other positions for your overlay
+        // See https://docs.snap.com/snap-kit/camera-kit/release/design-guide
+        addSnapAttributionOverlay(cameraViewController)
+        
         cameraViewController.appOrientationDelegate = self
         window?.rootViewController = cameraViewController
         
@@ -52,6 +59,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SnapchatDelegate {
         window?.makeKeyAndVisible()
 
         return true
+    }
+    
+    fileprivate func addSnapAttributionOverlay(_ cameraViewController: CameraViewController) {
+        let imageName = "SnapAttribution.png"
+        let image = UIImage(named: imageName)
+        let imageView = UIImageView(image: image)
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        cameraViewController.view.addSubview(imageView)
+        let centerXConst = NSLayoutConstraint(item: imageView, attribute: .centerX, relatedBy: .equal, toItem: cameraViewController.view, attribute: .centerX, multiplier: 1.0, constant: 0.0)
+        let topConst = NSLayoutConstraint(item: imageView, attribute: .top, relatedBy: .equal, toItem: cameraViewController.view, attribute: .top, multiplier: 1.0, constant: 20.0)
+        
+        NSLayoutConstraint.activate([centerXConst, topConst])
     }
     
     func cameraKitViewController(_ viewController: UIViewController, openSnapchat screen: SnapchatScreen) {
